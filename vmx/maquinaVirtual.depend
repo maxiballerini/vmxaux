@@ -1,0 +1,70 @@
+# depslib dependency file v1.0
+1712674924 source:c:\universidad\maquina virtual\maquinavirtual\main.c
+	<stdio.h>
+	<stdlib.h>
+	"componentes.h"
+	"funciones.h"
+
+1712674938 c:\universidad\maquina virtual\maquinavirtual\componentes.h
+
+1712675195 source:c:\universidad\maquina virtual\maquinavirtual\funciones.c
+
+1712675195 c:\universidad\maquina virtual\maquinavirtual\funciones.h
+
+1713230115 source:c:\universidad\maquinavirtual12\maquinavirtual12\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"componentes.h"
+	"funciones.h"
+
+1713028518 c:\universidad\maquinavirtual12\maquinavirtual12\componentes.h
+
+1712675195 c:\universidad\maquinavirtual12\maquinavirtual12\funciones.h
+
+1713288410 source:c:\universidad\maquinavirtual12\maquinavirtual\funciones.c
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<time.h>
+	"componentes.h"
+
+1713291229 c:\universidad\maquinavirtual12\maquinavirtual\componentes.h
+
+1713292625 source:c:\universidad\maquinavirtual12\maquinavirtual\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"componentes.h"
+	"funciones.h"
+
+1713288410 c:\universidad\maquinavirtual12\maquinavirtual\funciones.h
+
+1713640728 source:c:\universidad\maquinavirtual\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"disassembler.h"
+	"componentes.h"
+	"funciones.h"
+
+1713636226 c:\universidad\maquinavirtual\componentes.h
+
+1713635590 c:\universidad\maquinavirtual\funciones.h
+
+1713570527 source:c:\universidad\maquinavirtual\funciones.c
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<time.h>
+	"componentes.h"
+
+1713560282 source:c:\universidad\maquinavirtual\disassembler.c
+	"componentes.h"
+	<stdio.h>
+	<stdlib.h>
+
+1713635916 c:\universidad\maquinavirtual\disassembler.h
+	"componentes.h"
+

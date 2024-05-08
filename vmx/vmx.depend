@@ -1,0 +1,40 @@
+# depslib dependency file v1.0
+1713759068 source:c:\universidad\vmx\disassembler.c
+	"componentes.h"
+	<stdio.h>
+	<stdlib.h>
+
+1713636226 c:\universidad\vmx\componentes.h
+
+1715184923 source:c:\universidad\vmx\funciones.c
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<time.h>
+	"componentes.h"
+
+1715184855 source:c:\universidad\vmx\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	"disassembler.h"
+	"componentes.h"
+	"funciones.h"
+	"fncArch.h"
+
+1713635916 c:\universidad\vmx\disassembler.h
+	"componentes.h"
+
+1715184923 c:\universidad\vmx\funciones.h
+
+1715184661 c:\universidad\vmx\fncarch.h
+	"componentes.h"
+
+1715184731 source:c:\universidad\vmx\fncarch.c
+	"componentes.h"
+	<stdint.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
