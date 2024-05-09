@@ -3,22 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define CS 0
-#define DS 1
-#define ES 2
-#define SS 3
-#define KS 4
-#define IP 5
-#define CC 8
-#define BP 7
-#define CC 8
-#define AC 9
-#define EAX 10
-#define EBX 11
-#define ECX 12
-#define EDX 13
-#define EEX 14
-#define EFX 15
+#include "const.h"
 void inicializaTablaSegmentosVersion1(maquinaVirtual *MV,int i,uint16_t tamanoCodigo){
     MV->segmento[0]=i-1;
     int aux = tamanoCodigo-i;
@@ -29,7 +14,12 @@ void inicializaTablaSegmentosVersion1(maquinaVirtual *MV,int i,uint16_t tamanoCo
 }
 void inicializaTablaSegmentosVmx(maquinaVirtual *MV,uint16_t codeS,uint16_t dataS,uint16_t extraS,uint16_t stackS,uint16_t constS,int tamanoMemoria){
     int aux=0;
-    MV->segmento[CS] = 0;
+
+    MV->segmento[KS] = (MV->segmento[KS] & aux ) < 16;
+    MV->segmento[KS] += dataS; 
+    aux+=constS;
+
+    MV->segmento[CS] = (MV->segmento[] & aux ) < 16;
     MV->segmento[CS] += codeS;
     aux+=codeS;
 
@@ -70,13 +60,18 @@ void leeVersion1(maquinaVirtual *MV,FILE *arch){
 }
 void leeVerision2VMX(maquinaVirtual *MV,FILE *arch,int tamanoMemoria){
     uint16_t codeS,dataS,extraS,stackS,constS;
+    int flag;
+    char aux;
     fread(&codeS, 1, 2, arch);
     fread(&dataS, 1, 2, arch);
     fread(&extraS, 1, 2, arch);
     fread(&stackS, 1, 2, arch);
     fread(&constS, 1, 2, arch);
     inicializaTablaSegmentosVmx(MV,codeS,dataS,extraS,stackS,constS,tamanoMemoria);
-
+    flag=constS + codeS;
+    for(int i=0;i<codeS;i++){
+        fread(MV->memoria[i],1,1,arch);
+    }
 
 }
 void leeVerision2VMI(maquinaVirtual *MV,FILE *arch,int tamanoMemoria){
