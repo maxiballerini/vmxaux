@@ -4,78 +4,101 @@
 #include <stdlib.h>
 #include <string.h>
 #include "const.h"
-void inicializaTablaSegmentosVersion1(maquinaVirtual *MV,int i,uint16_t tamanoCodigo){
-    MV->segmento[0]=i-1;
-    int aux = tamanoCodigo-i;
-    MV->segmento[1] =0;
-    MV->segmento[1] = MV->segmento[1]|  (aux& 0x0000FFFF);
-    MV->segmento[1] = MV->segmento[1] | (i-1)<<16;
-
-}
-void inicializaTablaSegmentosVmx(maquinaVirtual *MV,uint16_t codeS,uint16_t dataS,uint16_t extraS,uint16_t stackS,uint16_t constS,int tamanoMemoria){
-    int aux=0;
+void inicializaTablaSegmentos(maquinaVirtual *MV,uint16_t codeS,uint16_t dataS,uint16_t extraS,uint16_t stackS,uint16_t constS,int tamanoMemoria){
+    int aux=0,pos=0;
+    MV->segmento[KS] = -1;
+    MV->segmento[CS] = -1;
+    MV->segmento[DS] = -1;
+    MV->segmento[ES] = -1;
+    MV->segmento[SS] = -1;
     if(KS>0){
-        MV->segmento[KS] = (MV->segmento[CS] & aux ) < 16;
-        MV->segmento[KS] += dataS; 
+        MV->registro[KS]=pos<<16;
+        MV->segmento[pos] = aux < 16;
+        MV->segmento[pos] += dataS;
         aux+=constS;
+        pos++;
     }
     if(CS>0){
-        MV->segmento[CS] = (MV->segmento[CS] & aux ) < 16;
-        MV->segmento[CS] += codeS;
+        MV->registro[CS]=pos<<16;
+        MV->segmento[pos] =  aux  < 16;
+        MV->segmento[pos] += codeS;
         aux+=codeS;
+        pos++;
     }
     if(DS>0){
-        MV->segmento[DS] = (MV->segmento[DS] & aux ) < 16;
-        MV->segmento[DS] += dataS; 
+        MV->registro[DS]=pos<<16;
+        MV->segmento[pos] =  aux  < 16;
+        MV->segmento[pos] += dataS; 
         aux+=dataS;
+        pos++;
     }
     if(ES>0){
-        MV->segmento[ES] = (MV->segmento[ES] & aux ) < 16;
-        MV->segmento[ES] += dataS; 
+        MV->registro[ES]=pos<<16;
+        MV->segmento[pos] =  aux  < 16;
+        MV->segmento[pos] += dataS; 
         aux+=extraS;
+        pos++;
     }
     if(SS>0){
-        MV->segmento[SS] = (MV->segmento[SS] & aux ) < 16;
-        MV->segmento[SS] += dataS; 
+        MV->registro[SS]=pos<<16;
+        MV->segmento[pos] =  aux  < 16;
+        MV->segmento[pos] += dataS; 
         aux+=stackS;
+        pos++;
     }
 
     if (aux>tamanoMemoria*1024){
+        printf("espacio insuficiente en la memoria\n");
         exit(0);
     }
 }
 
-void leeVersion1(maquinaVirtual *MV,FILE *arch){
+void leeVersion1(maquinaVirtual *MV,FILE *arch,int tamanoMemoria){
     char aux;
-    uint16_t tamanoCodigo=0;
     int i=0;
     while(!feof(arch)){
         fread(&aux,1,1,arch);
         MV->memoria[i]=aux;
         i++;
     }
-    MV->registro[CS]=0x00000000;
-    MV->registro[DS]=0x00010000;
-    inicializaTablaSegmentosVersion1(MV,i,tamanoCodigo);
+    i--;
+    inicializaTablaSegmentos(MV,i,tamanoMemoria-i,0,0,0,tamanoMemoria);
     MV->registro[IP]=0;
 }
 void leeVerision2VMX(maquinaVirtual *MV,FILE *arch,int tamanoMemoria){
     uint16_t codeS,dataS,extraS,stackS,constS;
-    int flag;
+    int flag,offsetIP;
     char aux;
-    fread(&codeS, 1, 2, arch);
-    fread(&dataS, 1, 2, arch);
-    fread(&extraS, 1, 2, arch);
-    fread(&stackS, 1, 2, arch);
-    fread(&constS, 1, 2, arch);
-    inicializaTablaSegmentosVmx(MV,codeS,dataS,extraS,stackS,constS,tamanoMemoria);
+    fread(&codeS, 2, 1, arch);
+    fread(&dataS, 2, 1, arch);
+    fread(&extraS, 2, 1, arch);
+    fread(&stackS, 2, 1, arch);
+    fread(&constS, 2, 1, arch);
+    fread(&offsetIP, 2, 1, arch);
+    inicializaTablaSegmentos(MV,codeS,dataS,extraS,stackS,constS,tamanoMemoria);
     flag=constS + codeS;
     for(int i=0;i<flag;i++){
-        fread(&MV->memoria[i],1,1,arch);
+        fread(&(MV->memoria[i]),1,1,arch);
     }
-
+    MV->registro[IP]=constS<<16;
+    MV->registro[IP]+=offsetIP;
 }
 void leeVerision2VMI(maquinaVirtual *MV,FILE *arch,int tamanoMemoria){
+    uint16_t tamanoMemoriaP;
+    int flag ;
+    int regAux,i;
+    fread(&tamanoMemoriaP,1,2,arch);
+    for(i=0;i<16;i++){
+        fread(&(MV->registro[i]),4,1,arch);
+    }
+    for(i=0;i<8;i++){
+        fread(&(MV->segmento[i]),4,1,arch);
+    }
+    flag =( MV->segmento[((MV->registro[CS] >>16)&0x0000FFFF)] & 0x0000FFFF ) + ( MV->segmento[((MV->registro[KS] >>16)&0x0000FFFF)] & 0x0000FFFF );
+
+    for(i=0;i<flag;i++){
+        fread(&(MV->memoria[i]),1,1,arch);
+    }
 
 }
 
@@ -92,7 +115,7 @@ void leeArch(maquinaVirtual *MV,char *nombreArchivoVMX,char *nombreArchivoVMI,in
         fread(identificador, 1, 5, arch);
         fread(&version, 1, 1, arch);
         if(version==1){
-            leeVersion1(MV,arch);
+            leeVersion1(MV,arch,tamanoMemoria*1024);
         }
         else{
             if(!nombreArchivoVMX)
