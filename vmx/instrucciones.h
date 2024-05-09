@@ -26,6 +26,10 @@ void JNN (maquinaVirtual *MV,int,char);
 void LDL (maquinaVirtual *MV,int,char);
 void LDH (maquinaVirtual *MV,int,char);
 void NOT (maquinaVirtual *MV,int,char);
+void PUSH (maquinaVirtual *MV,int,char);
+void POP (maquinaVirtual *MV,int,char);
+void CALL (maquinaVirtual *MV,int,char);
 
 //0 operandos
 void STOP (maquinaVirtual *MV);
+void RET (maquinaVirtual *MV);

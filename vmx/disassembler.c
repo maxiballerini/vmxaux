@@ -1,19 +1,22 @@
 #include "componentes.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "const.h"
 void ejecutadisasssembler(maquinaVirtual MV){
-    int opA,opB,i=0;
+    int opA,opB,i=0,flag;
     char operandoA,operandoB,aux;
     int auxReg,offset,secReg;
     char *funciones2OP[13] = {"MOV","ADD","SUB","SWAP","MUL","DIV","CMP","SHL","SHR","AND","OR","XOR","RND"};
-    char *funciones1OP[11] = {"SYS","JMP","JZ","JP","JN","JNZ","JNP","JNN","LDL","LDH","NOT"};
-    char *funciones0OP[1] = {"STOP"};
+    char *funciones1OP[14] = {"SYS","JMP","JZ","JP","JN","JNZ","JNP","JNN","LDL","LDH","NOT","PUSH","POP","CALL"};
+    char *funciones0OP[2] = {"STOP","RET"};
+    char *tipo[3]={"l","w","b"};
     char *Reg[16]={"CS","DS"," "," "," ","IP"," "," ","CC","AC","EAX","EBX","ECX","EDX","EEX","EFX"};
     char *RegHigh[16]={"CS","DS"," "," "," ","IP"," "," ","CC","AC","AH","BH","CH","DH","EH","FH"};
     char *RegLow[16]={"CS","DS"," "," "," ","IP"," "," ","CC","AC","AL","BL","CL","DL","EL","FL"};
     char *RegX[16]={"CS","DS"," "," "," ","IP"," "," ","CC","AC","AX","BX","CX","DX","EX","FX"};
     char mascara0Operando= 0xFF,mascara2Operando= 0x10;
-    while( i< MV.segmento[0]){
+    flag =( MV.segmento[((MV.registro[CS] >>16)&0x0000FFFF)] & 0x0000FFFF ) + ( MV.segmento[((MV.registro[KS] >>16)&0x0000FFFF)] & 0x0000FFFF );
+    while( i< flag){
         aux=MV.memoria[i];
         printf("[%04X] %02X ",i,(unsigned char)aux);
         i++;
@@ -37,9 +40,9 @@ void ejecutadisasssembler(maquinaVirtual MV){
                 auxReg = opA>>16;
                 offset = opA & 0x0000FFFF;
                 if(auxReg!=1)
-                    printf("[%s + %d], ",Reg[auxReg],offset);
+                    printf("%d[%s + %d], ",tipo[(((operandoA&0xC0000000)>>22) & 0x00000003)+1],Reg[auxReg],offset);
                 else
-                    printf("[%d], ",offset);
+                    printf("%d[%d], ",tipo[(((operandoA&0xC0000000)>>22) & 0x00000003)+1],offset);
             }
             else if (operandoA==1){
                 secReg =(opA & 0x000000F0) >> 4;
@@ -62,9 +65,9 @@ void ejecutadisasssembler(maquinaVirtual MV){
                 auxReg = opB>>16;
                 offset = opB & 0x0000FFFF;
                 if(auxReg!=1)
-                    printf("[%s + %d]\n",Reg[auxReg],offset);
+                    printf("%d[%s + %d]\n",tipo[(((operandoA&0xC0000000)>>22) & 0x00000003)+1],Reg[auxReg],offset);
                 else
-                    printf("[%d]\n",offset);
+                    printf("%d[%d]\n",tipo[(((operandoA&0xC0000000)>>22) & 0x00000003)+1],offset);
             }
             else if (operandoB==1){
                 secReg =(opB & 0x000000F0) >> 4;
@@ -95,9 +98,9 @@ void ejecutadisasssembler(maquinaVirtual MV){
                 auxReg = opB>>16;
                 offset = opB & 0x0000FFFF;
                 if(auxReg!=1)
-                    printf("[%s + %d]\n",Reg[auxReg],offset);
+                    printf("%d[%s + %d]\n",tipo[(((operandoA&0xC0000000)>>22) & 0x00000003)+1],Reg[auxReg],offset);
                 else
-                    printf("[%d]\n",offset);
+                    printf("%d[%d]\n",tipo[(((operandoA&0xC0000000)>>22) & 0x00000003)+1],offset);
             }
             else if (operandoB==1){
                 secReg =(opB & 0x000000F0) >> 4;

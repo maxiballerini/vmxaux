@@ -99,9 +99,10 @@ void escriberegistro(maquinaVirtual *MV,int Reg,int dato){
         MV->registro[codReg] =  (MV->registro[codReg] & 0xFFFF0000) | (dato & 0x0000FFFF);
     }
 }
-int obtieneOP(maquinaVirtual *MV,int OP,int tipoOP,int cantMemoria){
-    int secReg,codReg;
+int obtieneOP(maquinaVirtual *MV,int OP,int tipoOP){
+    int secReg,codReg,cantMemoria;
     if(tipoOP==3){
+        cantMemoria = (((OP&0xC0000000)>>22) & 0x00000003)+1;
         return leememoria(MV,cantMemoria,obtienePunteroMemoria(MV,OP));
     }
     else if(tipoOP==1){
@@ -118,15 +119,15 @@ int obtieneOP(maquinaVirtual *MV,int OP,int tipoOP,int cantMemoria){
 }
 //2 operandos
 void MOV(maquinaVirtual*MV,int opA,int opB,char tipoA,char tipoB){
-    int datoB = obtieneOP(MV,opB,tipoB,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
     if(tipoA==3)
         escribememoria(MV,4,obtienePunteroMemoria(MV,opA),datoB);
     else
         escriberegistro(MV,opA,datoB);
 }
 void ADD(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA+datoB;
     if(datoA==0)
         MV->registro[CC]=0x00000001;
@@ -143,8 +144,8 @@ void ADD(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void SUB(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA-datoB;
     if(datoA==0)
         MV->registro[CC]=0x00000001;
@@ -160,8 +161,8 @@ void SUB(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void SWAP(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     if(tipoA==3){
         escribememoria(MV,4,obtienePunteroMemoria(MV,opA),datoB);
         escribememoria(MV,4,obtienePunteroMemoria(MV,opB),datoA);
@@ -173,8 +174,8 @@ void SWAP(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void MUL(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA*datoB;
     if(datoA==0)
         MV->registro[CC]=0x00000001;
@@ -190,8 +191,8 @@ void MUL(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void DIV(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     if (datoB == 0) {
         printf("Error: División por cero.\n");
         exit(0);
@@ -215,8 +216,8 @@ void DIV(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void CMP(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA-datoB;
     if(datoA==0)
         MV->registro[CC]=0x00000001;
@@ -228,8 +229,8 @@ void CMP(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void SHL(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4),secReg;
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB),secReg;
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA<<datoB;
     if(tipoA==3)
         escribememoria(MV,4,obtienePunteroMemoria(MV,opA),datoA);
@@ -246,8 +247,8 @@ void SHL(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void SHR(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4),secReg;
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB),secReg;
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA>>datoB;
     if((datoA & 0x80000000) == 0x80000000){
         for(int i=1;i<datoB;i++){
@@ -269,8 +270,8 @@ void SHR(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void AND(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA&datoB;
     if(datoA==0)
         MV->registro[CC]=0x00000001;
@@ -286,8 +287,8 @@ void AND(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void OR(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-       int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+       int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA|datoB;
     if(datoA==0)
         MV->registro[CC]=0x00000001;
@@ -303,8 +304,8 @@ void OR(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void XOR(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-       int datoB = obtieneOP(MV,opB,tipoB,4);
-    int datoA = obtieneOP(MV,opA,tipoA,4);
+       int datoB = obtieneOP(MV,opB,tipoB);
+    int datoA = obtieneOP(MV,opA,tipoA);
     datoA=datoA^datoB;
     if(datoA==0)
         MV->registro[CC]=0x00000001;
@@ -320,7 +321,7 @@ void XOR(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
 }
 
 void RND(maquinaVirtual *MV, int opA, int opB, char tipoA, char tipoB) {
-    int datoB = obtieneOP(MV,opB,tipoB,4);
+    int datoB = obtieneOP(MV,opB,tipoB);
     srand(time(NULL));
     datoB = rand() % (datoB+1);
 
@@ -409,11 +410,11 @@ void write(maquinaVirtual *MV){
 //1 opereando
 void SYS (maquinaVirtual *MV,int opA,char tipoA){
     FuncPtr0 funcionesSYS[2] = {read,write};
-    int indice = obtieneOP(MV,opA,tipoA,4);
+    int indice = obtieneOP(MV,opA,tipoA);
     funcionesSYS[indice - 1](MV);
 }
 void JMP (maquinaVirtual *MV,int opA,char tipoA){
-    int dato = obtieneOP(MV,opA,tipoA,4);
+    int dato = obtieneOP(MV,opA,tipoA);
     MV->registro[IP]=dato;
 }
 void JZ (maquinaVirtual *MV,int opA,int tipoA) {
@@ -447,15 +448,15 @@ void JNN (maquinaVirtual *MV,int opA,int tipoA){
     }
 }
 void LDL (maquinaVirtual *MV,int opA,int tipoA){
-    int dato=obtieneOP(MV,opA,tipoA,4);
+    int dato=obtieneOP(MV,opA,tipoA);
     MV->registro[AC] = (MV->registro[AC] & 0xFFFF0000) | (dato & 0x0000FFFF);
 }
 void LDH (maquinaVirtual *MV,int opA,int tipoA){
-    int dato=obtieneOP(MV,opA,tipoA,4);
+    int dato=obtieneOP(MV,opA,tipoA);
     MV->registro[AC]=(MV->registro[AC] & 0x0000FFFF) | (dato & 0x0000FFFF)<<16;
 }
 void NOT (maquinaVirtual *MV,int opA,int tipoA){
-    int datoA = obtieneOP(MV,opA,tipoA,4),secReg;
+    int datoA = obtieneOP(MV,opA,tipoA),secReg;
     datoA=~datoA;
     if(datoA==0)
         MV->registro[CC]=0x00000001;
@@ -478,8 +479,19 @@ void NOT (maquinaVirtual *MV,int opA,int tipoA){
         escriberegistro(MV,opA,datoA);
     }
 }
+void PUSH (maquinaVirtual *MV,int opA,int tipoA){
 
+}
+void POP (maquinaVirtual *MV,int opA,int tipoA){
+
+}
+void CALL (maquinaVirtual *MV,int opA,int tipoA){
+
+}
 //0 operandos
 void STOP (maquinaVirtual *MV){
+    exit(0);
+}
+void RET (maquinaVirtual *MV){
     exit(0);
 }

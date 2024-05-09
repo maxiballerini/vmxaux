@@ -12,8 +12,8 @@ void ejecutaInstrucciones(maquinaVirtual MV){
     char operandoA,operandoB;
     char mascara0Operando= 0xFF,mascara2Operando= 0x10;
     FuncPtr2 funciones2OP[13] = {MOV,ADD,SUB,SWAP,MUL,DIV,CMP,SHL,SHR,AND,OR,XOR,RND};
-    FuncPtr1 funciones1OP[11] = {SYS,JMP,JZ,JP,JN,JNZ,JNP,JNN,LDL,LDH,NOT};
-    FuncPtr0 funciones0OP[1] = {STOP};
+    FuncPtr1 funciones1OP[14] = {SYS,JMP,JZ,JP,JN,JNZ,JNP,JNN,LDL,LDH,NOT,PUSH,POP,CALL};
+    FuncPtr0 funciones0OP[2] = {STOP,RET};
     do{
        // printf("se ejecuto la linea %04X\n",MV.registro[IP]);
         aux=MV.memoria[(int)MV.registro[IP]++];
