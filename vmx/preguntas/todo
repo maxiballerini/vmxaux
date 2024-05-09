@@ -1,1 +1,6 @@
-compl
+    testear carga de la memoria.
+    testear dissasembler.
+    cambiar funcion analiza segmento.
+    crear funciones push,pop,call y RET
+    actualizar sys
+    debugger

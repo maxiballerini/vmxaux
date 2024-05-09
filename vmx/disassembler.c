@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include "const.h"
 void ejecutadisasssembler(maquinaVirtual MV){
-    int opA,opB,i=0,flag;
-    char operandoA,operandoB,aux;
+    int opA,opB,i=0,flag,entrypoint,flagKS,j;
+    char operandoA,operandoB,aux,auxcadena[30];
     int auxReg,offset,secReg;
     char *funciones2OP[13] = {"MOV","ADD","SUB","SWAP","MUL","DIV","CMP","SHL","SHR","AND","OR","XOR","RND"};
     char *funciones1OP[14] = {"SYS","JMP","JZ","JP","JN","JNZ","JNP","JNN","LDL","LDH","NOT","PUSH","POP","CALL"};
@@ -15,9 +15,19 @@ void ejecutadisasssembler(maquinaVirtual MV){
     char *RegLow[16]={"CS","DS"," "," "," ","IP"," "," ","CC","AC","AL","BL","CL","DL","EL","FL"};
     char *RegX[16]={"CS","DS"," "," "," ","IP"," "," ","CC","AC","AX","BX","CX","DX","EX","FX"};
     char mascara0Operando= 0xFF,mascara2Operando= 0x10;
-    flag =( MV.segmento[((MV.registro[CS] >>16)&0x0000FFFF)] & 0x0000FFFF ) + ( MV.segmento[((MV.registro[KS] >>16)&0x0000FFFF)] & 0x0000FFFF );
-    while( i< flag){
+    flag = ( MV.segmento[((MV.registro[CS] >>16)&0x0000FFFF)] & 0x0000FFFF ) + ( MV.segmento[((MV.registro[KS] >>16)&0x0000FFFF)] & 0x0000FFFF );
+    entrypoint=(MV.segmento[MV.registro[IP]>>16])>>16 + MV.registro[IP] & 0x0000FFFF;
+    flagKS=MV.segmento[MV.registro[KS]>>16]&0x0000FFFF;
+    for(i=0;i<flagKS;i++){
+        while(aux!='\0'){
+
+        }
+        printf("[%04X] %02X ",i,(unsigned char)aux);
+    }
+    while( i< flag ){
         aux=MV.memoria[i];
+        if(i==entrypoint)
+            printf(">");
         printf("[%04X] %02X ",i,(unsigned char)aux);
         i++;
         opB=0;
