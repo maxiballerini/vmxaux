@@ -4,8 +4,9 @@
 #define SS 3
 #define KS 4
 #define IP 5
-#define CC 8
+#define SP 6
 #define BP 7
+#define CC 8
 #define CC 8
 #define AC 9
 #define EAX 10

@@ -14,30 +14,31 @@ void inicializaTablaSegmentosVersion1(maquinaVirtual *MV,int i,uint16_t tamanoCo
 }
 void inicializaTablaSegmentosVmx(maquinaVirtual *MV,uint16_t codeS,uint16_t dataS,uint16_t extraS,uint16_t stackS,uint16_t constS,int tamanoMemoria){
     int aux=0;
-
-    MV->segmento[KS] = (MV->segmento[KS] & aux ) < 16;
-    MV->segmento[KS] += dataS; 
-    aux+=constS;
-
-    MV->segmento[CS] = (MV->segmento[] & aux ) < 16;
-    MV->segmento[CS] += codeS;
-    aux+=codeS;
-
-    MV->segmento[DS] = (MV->segmento[DS] & aux ) < 16;
-    MV->segmento[DS] += dataS; 
-    aux+=dataS;
-
-    MV->segmento[ES] = (MV->segmento[ES] & aux ) < 16;
-    MV->segmento[ES] += dataS; 
-    aux+=extraS;
-
-    MV->segmento[SS] = (MV->segmento[SS] & aux ) < 16;
-    MV->segmento[SS] += dataS; 
-    aux+=stackS;
-
-    MV->segmento[KS] = (MV->segmento[KS] & aux ) < 16;
-    MV->segmento[KS] += dataS; 
-    aux+=constS;
+    if(KS>0){
+        MV->segmento[KS] = (MV->segmento[CS] & aux ) < 16;
+        MV->segmento[KS] += dataS; 
+        aux+=constS;
+    }
+    if(CS>0){
+        MV->segmento[CS] = (MV->segmento[CS] & aux ) < 16;
+        MV->segmento[CS] += codeS;
+        aux+=codeS;
+    }
+    if(DS>0){
+        MV->segmento[DS] = (MV->segmento[DS] & aux ) < 16;
+        MV->segmento[DS] += dataS; 
+        aux+=dataS;
+    }
+    if(ES>0){
+        MV->segmento[ES] = (MV->segmento[ES] & aux ) < 16;
+        MV->segmento[ES] += dataS; 
+        aux+=extraS;
+    }
+    if(SS>0){
+        MV->segmento[SS] = (MV->segmento[SS] & aux ) < 16;
+        MV->segmento[SS] += dataS; 
+        aux+=stackS;
+    }
 
     if (aux>tamanoMemoria*1024){
         exit(0);
@@ -69,8 +70,8 @@ void leeVerision2VMX(maquinaVirtual *MV,FILE *arch,int tamanoMemoria){
     fread(&constS, 1, 2, arch);
     inicializaTablaSegmentosVmx(MV,codeS,dataS,extraS,stackS,constS,tamanoMemoria);
     flag=constS + codeS;
-    for(int i=0;i<codeS;i++){
-        fread(MV->memoria[i],1,1,arch);
+    for(int i=0;i<flag;i++){
+        fread(&MV->memoria[i],1,1,arch);
     }
 
 }

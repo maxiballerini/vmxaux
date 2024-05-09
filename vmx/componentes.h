@@ -2,7 +2,7 @@
 #define COMPONENTES_H
 
 typedef struct {
-    char memoria[16384];
+    char memoria[65792];
     int registro[16];
     int segmento[8];
 } maquinaVirtual;
