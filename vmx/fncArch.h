@@ -1,2 +1,3 @@
 #include "componentes.h"
-int leeArch(maquinaVirtual *MV,char *VMX,char *VMI,int *aux,int *,int);
+
+int leeArch(maquinaVirtual *MV,int argc,char *argv[],int *mostrarAssembler);

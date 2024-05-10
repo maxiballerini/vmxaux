@@ -19,10 +19,14 @@ void ejecutadisasssembler(maquinaVirtual MV){
     entrypoint=(MV.segmento[MV.registro[IP]>>16])>>16 + MV.registro[IP] & 0x0000FFFF;
     flagKS=MV.segmento[MV.registro[KS]>>16]&0x0000FFFF;
     for(i=0;i<flagKS;i++){
-        while(aux!='\0'){
-
-        }
-        printf("[%04X] %02X ",i,(unsigned char)aux);
+        printf("[%04X] ",i);
+        j=0;
+        do{
+            aux=MV.memoria[i++];
+            auxcadena[j]=aux;
+            j++;
+        }while(aux!='\0');
+        printf("%s \n",auxcadena);
     }
     while( i< flag ){
         aux=MV.memoria[i];

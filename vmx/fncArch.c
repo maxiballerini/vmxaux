@@ -100,17 +100,33 @@ void leeVerision2VMI(maquinaVirtual *MV,FILE *arch,int tamanoMemoria){
     }
 
 }
-
-void leeArch(maquinaVirtual *MV,char *nombreArchivoVMX,char *nombreArchivoVMI,int *aux,int *mostratAssembler,int tamanoMemoria){
+void leeARG(int argc,char *argv[],int *tamanoMemoria,int *mostrarAssembler,char *nombreArchivoVMX,char *nombreArchivoVMI){
+    
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-d") == 0) {
+            mostrarAssembler = 1;
+        } else if (strncmp(argv[i], "m=", 2) == 0) {
+            tamanoMemoria = atoi(argv[i] + 2);
+        }else if (strstr(argv[i], ".vmx") != NULL) {
+            nombreArchivoVMX = argv[i];
+        }
+        else {
+            nombreArchivoVMI = argv[i];
+        }
+    }
+}
+int leeArch(maquinaVirtual *MV,int argc,char *argv[],int *mostrarAssembler){
     FILE *arch;
-    char identificador[5];
+    char identificador[5],*nombreArchivoVMX = NULL, *nombreArchivoVMI = NULL;
+    int tamanoMemoria = 16,aux=0;
     uint8_t version;
+    leeARG(argc,argv,&tamanoMemoria,&mostrarAssembler,nombreArchivoVMX,nombreArchivoVMI);
     if(!nombreArchivoVMX)
         arch = fopen(nombreArchivoVMI,"rb");
     else
         arch = fopen(nombreArchivoVMX,"rb");
     if(arch){
-        *aux=1;
+        aux=1;
         fread(identificador, 1, 5, arch);
         fread(&version, 1, 1, arch);
         if(version==1){
@@ -124,5 +140,6 @@ void leeArch(maquinaVirtual *MV,char *nombreArchivoVMX,char *nombreArchivoVMI,in
         }
         fclose(arch);
     }
+    return aux;
 }
 
