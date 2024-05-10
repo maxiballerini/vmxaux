@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "disassembler.h"
 #include "componentes.h"
+#include "ejecucion.h"
 #include "fncArch.h"
 int main(int argc,char *argv[]){
     maquinaVirtual MV;
