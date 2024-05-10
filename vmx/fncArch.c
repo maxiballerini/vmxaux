@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "string.h"
 #include "const.h"
 void inicializaTablaSegmentos(maquinaVirtual *MV,uint16_t codeS,uint16_t dataS,uint16_t extraS,uint16_t stackS,uint16_t constS,int tamanoMemoria){
     int aux=0,pos=0;
@@ -104,9 +105,9 @@ void leeARG(int argc,char *argv[],int *tamanoMemoria,int *mostrarAssembler,char 
     
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-d") == 0) {
-            mostrarAssembler = 1;
+            *mostrarAssembler = 1;
         } else if (strncmp(argv[i], "m=", 2) == 0) {
-            tamanoMemoria = atoi(argv[i] + 2);
+            *tamanoMemoria = atoi(argv[i] + 2);
         }else if (strstr(argv[i], ".vmx") != NULL) {
             nombreArchivoVMX = argv[i];
         }
@@ -116,7 +117,7 @@ void leeARG(int argc,char *argv[],int *tamanoMemoria,int *mostrarAssembler,char 
     }
 }
 void leeARGforDebugger(int argc,char *argv[],int *tamanoMemoria,int *mostrarAssembler,char *nombreArchivoVMX,char *nombreArchivoVMI){
-        mostrarAssembler = 1;
+        *mostrarAssembler = 1;
         strcpy(nombreArchivoVMX,"prueba1");
 }
 int leeArch(maquinaVirtual *MV,int argc,char *argv[],int *mostrarAssembler){
@@ -125,7 +126,7 @@ int leeArch(maquinaVirtual *MV,int argc,char *argv[],int *mostrarAssembler){
     int tamanoMemoria = 16,aux=0;
     uint8_t version;
     //leeARG(argc,argv,&tamanoMemoria,&mostrarAssembler,nombreArchivoVMX,nombreArchivoVMI);
-    leeARGforDebugger(argc,argv,&tamanoMemoria,&mostrarAssembler,nombreArchivoVMX,nombreArchivoVMI);
+    leeARGforDebugger(argc,argv,&tamanoMemoria,mostrarAssembler,nombreArchivoVMX,nombreArchivoVMI);
     if(!nombreArchivoVMX)
         arch = fopen(nombreArchivoVMI,"rb");
     else
